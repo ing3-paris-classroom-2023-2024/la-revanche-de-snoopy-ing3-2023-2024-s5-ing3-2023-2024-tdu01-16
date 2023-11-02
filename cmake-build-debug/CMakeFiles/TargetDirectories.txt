@@ -1,0 +1,3 @@
+C:/Users/juju1/CLionProjects/snoopygame/cmake-build-debug/CMakeFiles/snoopygame.dir
+C:/Users/juju1/CLionProjects/snoopygame/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/juju1/CLionProjects/snoopygame/cmake-build-debug/CMakeFiles/rebuild_cache.dir
