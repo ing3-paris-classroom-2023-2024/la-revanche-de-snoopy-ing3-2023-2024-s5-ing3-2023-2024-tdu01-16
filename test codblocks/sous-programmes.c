@@ -3,6 +3,8 @@
 #include <conio.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
+
 struct TypeBloc {
     char identifiant;
     char caractereAffiche;
@@ -18,8 +20,8 @@ struct TypeBloc blocPoussableDroite = {'5', '>'};
 struct TypeBloc blocPiege = {'6','6'};
 struct TypeBloc blocSnoopy = {'7','0'};
 struct TypeBloc blocInvincible = {'8',0xFE};
-struct TypeBloc blocDA = {'9','9'};
-struct TypeBloc blocPousser = {'A','A'};
+
+struct TypeBloc blocPousser = {'9','#'};
 struct TypeBloc blocOiseau = {'B',0xB8};
 
 struct Balle {
@@ -311,7 +313,7 @@ void caseblocPoussableDroite(char* NextBlock, int* snoopyX, int* snoopyY, int* N
     }
 }
 
-void caseBlocOiseau(char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22], char* direction, int*objectif){
+void caseBlocOiseau(char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22], char* direction, int*objectif, int*fin){
     if(*NextBlock == blocOiseau.caractereAffiche){
         gotoligcol(*snoopyX, *snoopyY);
         printf("%c",blocVide.caractereAffiche);
@@ -333,7 +335,129 @@ void caseBlocOiseau(char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositi
         gotoligcol(1,25);
         printf("Objectif %d/4",*objectif);
         Color(14,0);
+        if(*objectif==4){
+            *fin =1;
+        }
 }
+
+void caseBlockpiege(char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22],int* vie,const int* spawnSnoopyX,const int *spawnSnoopyY, int*fin){
+
+if ((*NextBlock) == blocPiege.caractereAffiche){
+    *vie = *vie - 1;
+    gotoligcol(*snoopyX, *snoopyY);
+    printf("%c",blocVide.caractereAffiche);
+    gotoligcol(*spawnSnoopyX,*spawnSnoopyY);
+    printf("%c",blocSnoopy.caractereAffiche);
+    tableau[*snoopyX][*snoopyY] = blocVide.caractereAffiche;
+    tableau[*spawnSnoopyX][*spawnSnoopyY]= blocSnoopy.caractereAffiche;
+    gotoligcol(2,25);
+    printf("vies %d/3",*vie);
+    gotoligcol(*snoopyX, *snoopyY);
+    printf("%c",blocVide.caractereAffiche);
+    *snoopyX = *spawnSnoopyX;
+    *snoopyY = *spawnSnoopyY;
+    if(*vie==0){
+        *fin = 1;
+    }
+    }
+}
+
+void caseBlocPoussable(char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22], char* direction){
+
+if ((*NextBlock) == blocPousser.caractereAffiche) {
+
+    switch (*direction){
+    case 'z':
+        if(tableau[(*NextPositionX)-1][*NextPositionY] == ' '){
+           gotoligcol(*snoopyX, *snoopyY);
+        printf(" ");
+        gotoligcol(*NextPositionX, *NextPositionY);
+        printf("0");
+        tableau[*NextPositionX][*NextPositionY] = blocSnoopy.caractereAffiche;
+        tableau[*snoopyX][*snoopyY] = blocVide.caractereAffiche;
+        *snoopyX = *NextPositionX;
+        *snoopyY = *NextPositionY;
+        gotoligcol((*NextPositionX)-1,*NextPositionY);
+        Color(7,0);
+        printf("%c", blocPousser.caractereAffiche);
+        Color(14,0);
+        tableau[(*NextPositionX)-1][*NextPositionY] = blocPousser.caractereAffiche;
+
+
+        }
+        break;
+
+    case 's':
+        if(tableau[(*NextPositionX)+1][*NextPositionY] == ' '){
+           gotoligcol(*snoopyX, *snoopyY);
+        printf(" ");
+        gotoligcol(*NextPositionX, *NextPositionY);
+        printf("0");
+        tableau[*NextPositionX][*NextPositionY] = blocSnoopy.caractereAffiche;
+        tableau[*snoopyX][*snoopyY] = blocVide.caractereAffiche;
+        *snoopyX = *NextPositionX;
+        *snoopyY = *NextPositionY;
+        gotoligcol((*NextPositionX)+1,*NextPositionY);
+        Color(7,0);
+        printf("%c", blocPousser.caractereAffiche);
+        Color(14,0);
+        tableau[(*NextPositionX)+1][*NextPositionY] = blocPousser.caractereAffiche;
+
+
+        }
+        break;
+
+    case 'q':
+        if(tableau[(*NextPositionX)][(*NextPositionY)-1] == ' '){
+           gotoligcol(*snoopyX, *snoopyY);
+        printf(" ");
+        gotoligcol(*NextPositionX, *NextPositionY);
+        printf("0");
+        tableau[*NextPositionX][*NextPositionY] = blocSnoopy.caractereAffiche;
+        tableau[*snoopyX][*snoopyY] = blocVide.caractereAffiche;
+        *snoopyX = *NextPositionX;
+        *snoopyY = *NextPositionY;
+        gotoligcol((*NextPositionX),(*NextPositionY)-1);
+        Color(7,0);
+        printf("%c", blocPousser.caractereAffiche);
+        Color(14,0);
+        tableau[(*NextPositionX)][(*NextPositionY)-1] = blocPousser.caractereAffiche;
+        }
+        break;
+
+    case 'd':
+        if(tableau[(*NextPositionX)][(*NextPositionY)+1] == ' '){
+           gotoligcol(*snoopyX, *snoopyY);
+        printf(" ");
+        gotoligcol(*NextPositionX, *NextPositionY);
+        printf("0");
+        tableau[*NextPositionX][*NextPositionY] = blocSnoopy.caractereAffiche;
+        tableau[*snoopyX][*snoopyY] = blocVide.caractereAffiche;
+        *snoopyX = *NextPositionX;
+        *snoopyY = *NextPositionY;
+        gotoligcol((*NextPositionX),(*NextPositionY)+1);
+        Color(7,0);
+        printf("%c", blocPousser.caractereAffiche);
+        Color(14,0);
+        tableau[(*NextPositionX)][(*NextPositionY)+1] = blocPousser.caractereAffiche;
+
+
+        }
+        break;
+
+    default :
+        break;
+
+
+
+        }
+
+
+        }
+
+
+
+    }
 
 
 
@@ -374,17 +498,20 @@ void affichertableau(char tableau[12][22]){
             }
     }
         printf("\n");
+
     }
 
 
 }
-void remplacerSymboles(char tableau[12][22], struct TypeBloc typesBlocs[], int taille, int *snoopyX, int *snoopyY) {
+void remplacerSymboles(char tableau[12][22], struct TypeBloc typesBlocs[], int taille, int *snoopyX, int *snoopyY, int *spawnSnoopyX,int*spawnSnoopyY) {
     for (int ligne = 0; ligne < 12; ++ligne) {
         for (int colonne = 0; colonne < 22; ++colonne) {
             char symbole = tableau[ligne][colonne];
             if (symbole == '7'){
                     *snoopyX = ligne;
                     *snoopyY = colonne;
+                    *spawnSnoopyX = *snoopyX;
+                    *spawnSnoopyY = *snoopyY;
 
             }
 
@@ -396,13 +523,25 @@ void remplacerSymboles(char tableau[12][22], struct TypeBloc typesBlocs[], int t
             }
         }
     }
+
+
 }
 
-void menuDemarrer(void) {
+void menuDemarrer(char*niveau) {
+
+    char motDePasseNiv1[] = "motdepasse";
+    char motDePasseNiv2[] = "1234";
+
+    char motDePasseUtilisateur[50];
+
+
+
+
+
     gotoligcol(5, 0);
         Color(14, 0);
         printf("LA REVANCHE DE SNOOPY");
-        sleep(4);
+        sleep(2);
         Color(15, 0);
         printf("\033[2J\033[H");
     while (1) {
@@ -411,6 +550,8 @@ void menuDemarrer(void) {
         printf("1 - Regles du jeu");
         gotoligcol(7, 0);
         printf("2 - Jouer");
+        gotoligcol(9, 0);
+        printf("3 - Charger un niveau");
 
         char saisie = getch();
 
@@ -435,7 +576,61 @@ void menuDemarrer(void) {
             // Logique pour démarrer le jeu
             break;  // Sortir de la boucle principale du menu
         }
+        else if  (saisie=='3'){
+            printf("\033[2J\033[H");
+            gotoligcol(0, 0);
+            printf("charger un niveau");
+            gotoligcol(5, 0);
+            printf("entrer le mot de passe : ");
+
+            fgets(motDePasseUtilisateur, sizeof(motDePasseUtilisateur), stdin);
+
+            // Supprimer le caractère de nouvelle ligne ajouté par fgets
+            size_t longueur = strlen(motDePasseUtilisateur);
+            if (longueur > 0 && motDePasseUtilisateur[longueur - 1] == '\n') {
+            motDePasseUtilisateur[longueur - 1] = '\0';
+
+            if (strcmp(motDePasseUtilisateur, motDePasseNiv1) == 0) {
+            printf("Mot de passe correct. OK!\n");
+            strcpy(niveau, "niveau1.txt");
+            printf("\033[2J\033[H");
+            gotoligcol(5, 0);
+            printf("niveau 1");
+            sleep(2);
+            printf("\033[2J\033[H");
+            }
+
+            else if (strcmp(motDePasseUtilisateur, motDePasseNiv2) == 0) {
+
+            strcpy(niveau, "niveau2.txt");
+            printf("\033[2J\033[H");
+            gotoligcol(5, 0);
+            printf("niveau 2");
+            sleep(2);
+            printf("\033[2J\033[H");
+
+
+            }
+            else{
+                printf("\033[2J\033[H");
+                gotoligcol(5, 0);
+                printf("mot de passe incorrecte!");
+                sleep(2);
+                printf("\033[2J\033[H");
+            }
+
     }
+
+}
+
+
+
+
+
+
+
+        }
+
     printf("\033[2J\033[H");
 }
 
