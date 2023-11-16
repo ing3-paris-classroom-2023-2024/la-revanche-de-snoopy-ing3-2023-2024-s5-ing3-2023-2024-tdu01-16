@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1699006749 source:c:\users\juju1\documents\ece\algorythmique\codeblocks\test codblocks\main.c
+	<stdio.h>
+	<conio.h>
+	<stdlib.h>
+	<windows.h>
+	"header.h"
+	"sous-programmes.c"
+	<time.h>
+	<pthread.h>
+
+1698680765 c:\users\juju1\documents\ece\algorythmique\codeblocks\test codblocks\header.h
+
+1699006933 c:\users\juju1\documents\ece\algorythmique\codeblocks\test codblocks\sous-programmes.c
+	"header.h"
+	<stdio.h>
+	<conio.h>
+	<time.h>
+	<unistd.h>
+
+1699271073 source:c:\users\adrie\downloads\test codblocks\test codblocks\main.c
+	<stdio.h>
+	<conio.h>
+	<stdlib.h>
+	<windows.h>
+	"header.h"
+	"sous-programmes.c"
+	<time.h>
+	<pthread.h>
+
+1698680765 c:\users\adrie\downloads\test codblocks\test codblocks\header.h
+
+1699007121 c:\users\adrie\downloads\test codblocks\test codblocks\sous-programmes.c
+	"header.h"
+	<stdio.h>
+	<conio.h>
+	<time.h>
+	<unistd.h>
+
