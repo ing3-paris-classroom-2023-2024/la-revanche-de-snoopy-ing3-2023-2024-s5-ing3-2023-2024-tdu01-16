@@ -153,55 +153,72 @@ void deplacement(char tableau[12][22], int *snoopyX, int *snoopyY) {
     }
 
 }
-void saisirDirection(char*direction,char*NextBlock,int*snoopyX,int*snoopyY,int*NextPositionX,int*NextPositionY,char tableau[12][22]){
+void saisirDirection(char* direction, char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22], clock_t* start_time, int* secondes,int *fin) {
+    Color(14, 0);
+    gotoligcol(*snoopyX, *snoopyY);
+    printf("0");
 
-Color(14,0);
-  gotoligcol(*snoopyX,*snoopyY);
-  printf("0");
+    while (1) {
 
-    (*direction) = getch();
-    fflush(stdin);
+        // Vérifier si une seconde s'est écoulée
+       if ((clock() - *start_time) >= CLOCKS_PER_SEC) {
+        (*secondes)--;
+        gotoligcol(3, 25);
+        printf("%d secondes restantes", *secondes);
+        gotoligcol(*snoopyX, *snoopyY);
+        // Réinitialiser le chrono
+        *start_time = clock();
+    }
+  /* else if (*secondes<=0){
+        (*fin)=1;
+    }*/
 
-    switch (*direction){
-    case 'z':
-        (*NextPositionX) = (*snoopyX) - 1;
-        (*NextPositionY) = (*snoopyY);
-        (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
+        // Vérifier si une touche est en attente
+      else if (_kbhit()) {
 
+            (*direction) = _getch();
+            fflush(stdin);
 
+            switch (*direction) {
+                case 'z':
+                    (*NextPositionX) = (*snoopyX) - 1;
+                    (*NextPositionY) = (*snoopyY);
+                    (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
+                    break;
+                case 's':
+                    (*NextPositionX) = (*snoopyX) + 1;
+                    (*NextPositionY) = (*snoopyY);
+                    (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
+                    break;
+                case 'q':
+                    (*NextPositionX) = (*snoopyX);
+                    (*NextPositionY) = (*snoopyY) - 1;
+                    (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
+                    break;
+                case 'd':
+                    (*NextPositionX) = (*snoopyX);
+                    (*NextPositionY) = (*snoopyY) + 1;
+                    (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
+                    break;
+                case 'c':
+                    (*direction) = 'c';
+                    // Tu peux ajouter d'autres cas ou des conditions ici selon tes besoins
+                    break;
+                default:
+                    // Afficher un message d'erreur ou demander à nouveau la saisie
+                    break;
+            }
 
-            break;
-        case 's':
-            (*NextPositionX) = (*snoopyX) + 1;
-        (*NextPositionY) = (*snoopyY);
-        (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
+            // Si la saisie est valide, sortir de la boucle
+            if (*direction == 'z' || *direction == 's' || *direction == 'q' || *direction == 'd' || *direction == 'c') {
+                break;
+            }
+        }
 
-
-            break;
-
-        case 'q':
-            (*NextPositionX) = (*snoopyX);
-        (*NextPositionY) = (*snoopyY)-1;
-        (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
-
-
-            break;
-        case 'd':
-            (*NextPositionX) = (*snoopyX);
-        (*NextPositionY) = (*snoopyY)+1;
-        (*NextBlock) = tableau[*NextPositionX][*NextPositionY];
-
-
-            break;
-        case 'c':
-        (*direction)= 'c';
-        default:
-
-            break;
     }
 
-
 }
+
 
 void caseVide(char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22]) {
     if ((*NextBlock) ==  blocVide.caractereAffiche) {
@@ -284,8 +301,6 @@ void caseblocPoussableGauche(char* NextBlock, int* snoopyX, int* snoopyY, int* N
         printf("%c", blocInvincible.caractereAffiche);
         Color(14,0);
         tableau[(*NextPositionX)][(*NextPositionY)-1] = blocInvincible.caractereAffiche;
-
-
         }
     }
 }
@@ -463,7 +478,6 @@ if ((*NextBlock) == blocPousser.caractereAffiche) {
 
 
 
-
 void chargerNiveau(char fichierNom[50], char tableau[12][22]) {
     FILE *fichier = fopen(fichierNom, "r");
 
@@ -634,5 +648,28 @@ void menuDemarrer(char*niveau) {
     printf("\033[2J\033[H");
 }
 
+void compteur(int *chrono, int *compteur, int *snoopyX, int *snoopyY, char tableau[12][22],int * fin) {
 
+
+        if (*compteur % 10 == 0) {
+            (*chrono)--;
+
+            gotoligcol(3, 25);
+            printf("%d secondes restantes", *chrono);
+            gotoligcol(*snoopyX, *snoopyY);
+        }
+        if (*chrono<=0){
+                *fin=1;
+
+        }
+
+        usleep(100000);
+        printf("\033[2J\033[H");
+        gotoligcol(3, 25);
+        printf("%d secondes restantes", *chrono);
+        gotoligcol(*snoopyX, *snoopyY);
+        (*compteur)++;
+        affichertableau(tableau);
+
+}
 
