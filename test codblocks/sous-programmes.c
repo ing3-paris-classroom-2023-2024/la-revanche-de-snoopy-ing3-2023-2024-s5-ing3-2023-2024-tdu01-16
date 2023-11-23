@@ -20,16 +20,15 @@ struct TypeBloc blocPoussableDroite = {'5', '>'};
 struct TypeBloc blocPiege = {'6','6'};
 struct TypeBloc blocSnoopy = {'7','0'};
 struct TypeBloc blocInvincible = {'8',0xFE};
-
 struct TypeBloc blocPousser = {'9','#'};
 struct TypeBloc blocOiseau = {'B',0xB8};
 
-struct Balle {
+typedef struct Balle {
     int x;
     int y;
     int directionX;
     int directionY;
-};
+}t_balle;
 
 void Color(int couleurDuTexte,int couleurDeFond)
 {
@@ -85,6 +84,7 @@ Color(2,0);
     }
 
 }
+
 
 void deplacement(char tableau[12][22], int *snoopyX, int *snoopyY) {
   Color(14,0);
@@ -153,7 +153,10 @@ void deplacement(char tableau[12][22], int *snoopyX, int *snoopyY) {
     }
 
 }
-void saisirDirection(char* direction, char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22], clock_t* start_time, int* secondes,int *fin) {
+void saisirDirection(char* direction, char* NextBlock, int* snoopyX, int* snoopyY, int* NextPositionX, int* NextPositionY, char tableau[12][22], clock_t* start_time, int* secondes,int *fin,t_balle*balle,int*vie
+                    ,int*spawnSnoopyX,int*spawnSnoopyY) {
+
+    char pause;
     Color(14, 0);
     gotoligcol(*snoopyX, *snoopyY);
     printf("0");
@@ -166,14 +169,81 @@ void saisirDirection(char* direction, char* NextBlock, int* snoopyX, int* snoopy
         gotoligcol(3, 25);
         printf("%d secondes restantes", *secondes);
         gotoligcol(*snoopyX, *snoopyY);
+        // deplacement de la balle
+            // Effacer la position actuelle de la balle
+    gotoligcol(balle->x, balle->y);
+    if (tableau[balle->x][balle->y]== blocInvincible.identifiant){
+            Color(7, 0);
+
+    }
+   else if (tableau[balle->x][balle->y]== blocSnoopy.caractereAffiche){
+            Color(14, 0);
+
+    }
+    else{Color(2, 0);}
+    printf("%c",tableau[balle->x][balle->y]);
+    Color(14, 0);
+
+    // Mettre à jour la position de la balle
+    balle->x += balle->directionX;
+    balle->y += balle->directionY;
+
+    // Vérifier les collisions avec les murs (rebonds)
+    if (balle->x == 1 || balle->x == 10) {
+        balle->directionX = -balle->directionX;  // Inverser la direction en cas de collision avec un mur vertical
+    }
+
+   else if (balle->y == 1 || balle->y == 20) {
+        balle->directionY = -balle->directionY;  // Inverser la direction en cas de collision avec un mur horizontal
+    }
+    if(balle->x == (*snoopyX) && balle->y == (*snoopyY)) {
+
+            *vie = *vie - 1;
+    gotoligcol(*snoopyX, *snoopyY);
+    printf("%c",blocVide.caractereAffiche);
+    gotoligcol(*spawnSnoopyX,*spawnSnoopyY);
+    printf("%c",blocSnoopy.caractereAffiche);
+    tableau[*snoopyX][*snoopyY] = blocVide.caractereAffiche;
+    tableau[*spawnSnoopyX][*spawnSnoopyY]= blocSnoopy.caractereAffiche;
+    gotoligcol(2,25);
+    printf("vies %d/3",*vie);
+    gotoligcol(*snoopyX, *snoopyY);
+    printf("%c",blocVide.caractereAffiche);
+    *snoopyX = *spawnSnoopyX;
+    *snoopyY = *spawnSnoopyY;
+
+
+            }
+    if (*secondes==0){
+
+       *vie = *vie - 1;
+       gotoligcol(2,25);
+        printf("vies %d/3",*vie);
+    }
+    if(*vie==0){
+        *fin = 1;
+    }
+    if(*secondes<=0){
+        //*secondes=0;
+        gotoligcol(3, 25);
+        printf("0 secondes restantes");
+    }
+
+    // Afficher la balle à la nouvelle position
+    gotoligcol(balle->x, balle->y);
+    printf("o");
         // Réinitialiser le chrono
         *start_time = clock();
+    if(*secondes<=0){
+        *secondes=0;
     }
-  /* else if (*secondes<=0){
-        (*fin)=1;
-    }*/
 
-        // Vérifier si une touche est en attente
+
+    }
+
+
+
+    // Vérifier si une touche est en attente
       else if (_kbhit()) {
 
             (*direction) = _getch();
@@ -202,10 +272,27 @@ void saisirDirection(char* direction, char* NextBlock, int* snoopyX, int* snoopy
                     break;
                 case 'c':
                     (*direction) = 'c';
-                    // Tu peux ajouter d'autres cas ou des conditions ici selon tes besoins
+                    break;
+                case 'p':
+                        gotoligcol(4, 25);
+                        Color(4,0);
+                        printf("PAUSE");
+                    pause   = _getch();
+                    fflush(stdin);
+                    while(pause!='p'){
+
+                        pause   = _getch();
+                        fflush(stdin);
+
+                    }
+                    gotoligcol(4, 25);
+                    Color(14,0);
+                    printf("      ");
+
+
                     break;
                 default:
-                    // Afficher un message d'erreur ou demander à nouveau la saisie
+
                     break;
             }
 
@@ -547,6 +634,7 @@ void menuDemarrer(char*niveau) {
     char motDePasseNiv2[] = "1234";
 
     char motDePasseUtilisateur[50];
+    int continuer = 0;
 
 
 
@@ -558,7 +646,7 @@ void menuDemarrer(char*niveau) {
         sleep(2);
         Color(15, 0);
         printf("\033[2J\033[H");
-    while (1) {
+    while (continuer ==0) {
 
         gotoligcol(5, 0);
         printf("1 - Regles du jeu");
@@ -566,10 +654,14 @@ void menuDemarrer(char*niveau) {
         printf("2 - Jouer");
         gotoligcol(9, 0);
         printf("3 - Charger un niveau");
+        gotoligcol(11, 0);
+        printf("4 - score");
+        gotoligcol(11, 0);
+        printf("5 - quitter");
 
         char saisie = getch();
-
-        if (saisie == '1') {
+        switch(saisie){
+        case '1':
             printf("\033[2J\033[H");
             gotoligcol(0, 0);
             printf("Initialement, le joueur possede 3 vies.\n");
@@ -586,11 +678,14 @@ void menuDemarrer(char*niveau) {
             }
 
             printf("\033[2J\033[H");
-        } else if (saisie == '2') {
-            // Logique pour démarrer le jeu
+        break;
+
+
+        case '2':
+           continuer = 1; // Logique pour démarrer le jeu
             break;  // Sortir de la boucle principale du menu
-        }
-        else if  (saisie=='3'){
+
+        case '3':
             printf("\033[2J\033[H");
             gotoligcol(0, 0);
             printf("charger un niveau");
@@ -635,9 +730,23 @@ void menuDemarrer(char*niveau) {
 
     }
 
-}
+break;
+
+        case '4':
+
+            break;
+
+        case '5':
+            printf("\033[2J\033[H");
+             gotoligcol(5, 0);
+            printf("Au revoir !\n");
+            sleep(2);
+                exit(0);
 
 
+            break;
+        default:
+            break;
 
 
 
@@ -648,28 +757,11 @@ void menuDemarrer(char*niveau) {
     printf("\033[2J\033[H");
 }
 
-void compteur(int *chrono, int *compteur, int *snoopyX, int *snoopyY, char tableau[12][22],int * fin) {
+}
+int calcul_score(int score,int secondes){
+    int calc = 0;
+    calc = score + secondes*100;
 
-
-        if (*compteur % 10 == 0) {
-            (*chrono)--;
-
-            gotoligcol(3, 25);
-            printf("%d secondes restantes", *chrono);
-            gotoligcol(*snoopyX, *snoopyY);
-        }
-        if (*chrono<=0){
-                *fin=1;
-
-        }
-
-        usleep(100000);
-        printf("\033[2J\033[H");
-        gotoligcol(3, 25);
-        printf("%d secondes restantes", *chrono);
-        gotoligcol(*snoopyX, *snoopyY);
-        (*compteur)++;
-        affichertableau(tableau);
-
+    return calc;
 }
 
