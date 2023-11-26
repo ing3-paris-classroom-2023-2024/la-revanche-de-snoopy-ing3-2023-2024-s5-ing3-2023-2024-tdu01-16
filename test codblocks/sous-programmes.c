@@ -632,6 +632,7 @@ void menuDemarrer(char*niveau) {
 
     char motDePasseNiv1[] = "motdepasse";
     char motDePasseNiv2[] = "1234";
+    char motDePasseNiv3[] = "ABCDEFG";
 
     char motDePasseUtilisateur[50];
     int continuer = 0;
@@ -666,8 +667,11 @@ void menuDemarrer(char*niveau) {
             gotoligcol(0, 0);
             printf("Initialement, le joueur possede 3 vies.\n");
             printf("Chaque niveau doit etre resolu en moins de 120 secondes.\n");
-            printf("Si le temps est écoule, le joueur perd une vie et recommence le niveau.\n");
+            printf("Si le temps est ecoule, le joueur perd une vie et recommence le niveau.\n");
             printf("Le but est de recuperer les 4 oiseaux du niveau sans se faire toucher par la balle et/ou les ennemis (si presents).\n\n\n");
+            printf(" Z\nQSD POUR SE DEPLACER\n");
+            printf("  vous pouvez mettre pause a tout moment en appuyant sur p\n\n\n");
+
             printf("Appuyez sur 'b' pour revenir au menu.\n");
 
             while (1) {
@@ -715,6 +719,17 @@ void menuDemarrer(char*niveau) {
             printf("\033[2J\033[H");
             gotoligcol(5, 0);
             printf("niveau 2");
+            sleep(2);
+            printf("\033[2J\033[H");
+
+
+            }
+             else if (strcmp(motDePasseUtilisateur, motDePasseNiv3) == 0) {
+
+            strcpy(niveau, "niveau3.txt");
+            printf("\033[2J\033[H");
+            gotoligcol(5, 0);
+            printf("niveau 3");
             sleep(2);
             printf("\033[2J\033[H");
 

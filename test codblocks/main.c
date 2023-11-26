@@ -93,7 +93,7 @@ int main() {
     printf("\033[2J\033[H");
     gotoligcol(5,5);
     printf("niveau termine");
-    sleep(4);
+    sleep(2);
     printf("\033[2J\033[H");
     strcpy(niveau, "niveau2.txt");
 
@@ -135,8 +135,54 @@ while(fin==0){
     gotoligcol(5,5);
     printf("niveau termine");
     sleep(4);
+    score=calcul_score(score,secondes);
+    fin = 0;
+    vie = 3;
+    secondes = 120;
+    objectif = 0;
 
+    printf("\033[2J\033[H");
+    gotoligcol(5,5);
+    printf("niveau termine");
+    sleep(2);
+    printf("\033[2J\033[H");
+    strcpy(niveau, "niveau3.txt");
+
+
+
+
+
+    affichageContour(tableau);
+    chargerNiveau(niveau, tableau);
+    remplacerSymboles(tableau, typesBlocs, tailleTypesBlocs,&snoopyX,&snoopyY,&spawnSnoopyX,&spawnSnoopyY);
+    affichertableau(tableau);
+
+
+while(fin==0){
+
+
+
+
+
+        saisirDirection(&direction,&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY, tableau,&start_time,&secondes,&fin,&balle,&vie
+                        ,&spawnSnoopyX,&spawnSnoopyY);
+        caseVide(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau);
+        caseBlockCassable(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction);
+        caseblocPoussableHaut(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction);
+        caseblocPoussableBas(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction);
+        caseblocPoussableGauche(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction);
+        caseblocPoussableDroite(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction);
+        caseBlocOiseau(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction, &objectif, &fin);
+        caseBlockpiege(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&vie,&spawnSnoopyX,&spawnSnoopyY,&fin);
+        caseBlocPoussable(&NextBlock,&snoopyX,&snoopyY,&NextPositionX,&NextPositionY,tableau,&direction);
+
+
+
+
+    }
+printf("\033[2J\033[H");
 gotoligcol(5,5);
     printf("score final : %d points",score);
+    sleep(4);
 }
 
